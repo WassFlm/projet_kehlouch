@@ -15,10 +15,10 @@ L'énoncé du projet est disponible [ici](doc/pres/420-SF3%20Projet%201.md).
 
 ## Auteurs
 
-- étudiant 1
-- étudiant 2
-- étudiant 3
-- étudiant 4
+- Mohamed Maazoun
+- Mickael Godard
+- Wassim Kenichi
+- Hussein Alawieh
 
 
 

@@ -1,0 +1,90 @@
+@startuml Projet 1 - UML
+
+skinparam class AttributeIconSize 0
+
+abstract class MathFunction {
+    - name: str
+    - description: str
+    - details: str
+    - parameters: Parameters
+
+    + {property} name: str {readOnly}
+    + {property} description: str {readOnly}
+    + {property} details: str {readOnly}
+    + {property} general_formula: str {readOnly}
+    + {property} actual_formula: str {readOnly}
+    + {property} parameters: Parameters {readOnly}
+    + ...
+
+    + __init__(name: str, description: str, details: str = "", parameters: Parameters)
+    + process(x: float): float
+    + process_np(x: NDArray): NDArray
+    + process_true_derivative(x: float): float
+    + process_true_integral(lowerBound: float, upperBound: float): float
+    + reset_parameters()
+    + ...()
+}
+
+abstract class NumericalTechniques {
+   
+}
+
+class TrigoFunction {
+  f(x) = a * trg(f * x + p) + o
+}
+MathFunction <|-- TrigoFunction
+
+class ExpoFunction {
+
+}
+MathFunction <|-- ExpoFunction
+
+
+class "B^x" {
+
+}
+ExpoFunction <|-- "B^x"
+
+
+class PolyFunction {
+
+}
+MathFunction <|-- PolyFunction
+
+
+class "QuadFunction" {
+
+}
+PolyFunction <|-- "QuadFunction"
+
+
+
+
+
+
+class SineFunction {
+
+}
+TrigoFunction <|-- SineFunction
+
+class RealParameters {
+ 
+}
+MathFunction *-right- RealParameters  
+
+
+class IntParameters {
+
+}
+NumericalTechniques *-left- RealParameters  
+NumericalTechniques*-right- IntParameters
+class IntegralNumerical {
+
+}
+NumericalTechniques <|-- IntegralNumerical
+class DerivativeNumerical {
+
+}
+NumericalTechniques <|-- DerivativeNumerical
+
+@enduml
