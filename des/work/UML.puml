@@ -1,5 +1,4 @@
-@startuml
-title Projet 1 - UML (Updated)
+@startuml Projet 1 - UML (Updated)
 
 skinparam class AttributeIconSize 0
 
@@ -70,8 +69,8 @@ class DerivativeNumerical {
 }
 NumericalTechniques <|-- DerivativeNumerical
 
-NumericalTechniques *-- RealParameter
-NumericalTechniques *-- IntParameters
+NumericalTechniques *-left- RealParameter
+NumericalTechniques *-right- IntParameters
 
 class IntParameters {
 }
