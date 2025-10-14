@@ -2,7 +2,7 @@
 
 skinparam class AttributeIconSize 0
 
-abstract class MathFunction { 
+abstract class MathFunction {
     - name: str
     - description: str
     - details: str
