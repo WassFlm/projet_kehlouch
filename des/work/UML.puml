@@ -1,90 +1,96 @@
-@startuml Projet 1 - UML
+@startuml
+title Projet 1 - UML (Updated)
 
 skinparam class AttributeIconSize 0
 
+' ========= CORE =========
 abstract class MathFunction {
-    - name: str
-    - description: str
-    - details: str
-    - parameters: Parameters
-
-    + {property} name: str {readOnly}
-    + {property} description: str {readOnly}
-    + {property} details: str {readOnly}
-    + {property} general_formula: str {readOnly}
-    + {property} actual_formula: str {readOnly}
-    + {property} parameters: Parameters {readOnly}
-    + ...
-
-    + __init__(name: str, description: str, details: str = "", parameters: Parameters)
-    + process(x: float): float
-    + process_np(x: NDArray): NDArray
-    + process_true_derivative(x: float): float
-    + process_true_integral(lowerBound: float, upperBound: float): float
-    + reset_parameters()
-    + ...()
+  - name: str
+  - description: str
+  - details: str
+  - parameters: List<RealParameter>
+  --
+  + MathFunction(name: str, details: str, description: str)
+  {abstract} + process(x: number): number
+  --
+  + {property} name: str {readOnly}
+  + {property} description: str {readOnly}
+  + {property} details: str {readOnly}
 }
 
-abstract class NumericalTechniques {
-   
-}
-
-class TrigoFunction {
+' ========= TRIG FAMILY =========
+abstract class TrigFunction {
+  {static} + TRIG_NAME: str
+  {static} + PARAM_SPECS: (symbol, name, desc, min, max, default)[]
+  {static} + PARAM_ORDER: str[]
+  --
+  + TrigFunction(name: str, details: str, description: str)
+  + get_param(param_symbol: str): RealParameter
+  + process(x: number): number
+  --
+  .. Formula ..
   f(x) = a * trg(f * x + p) + o
 }
-MathFunction <|-- TrigoFunction
 
+MathFunction <|-- TrigFunction
+
+class SineFunction {
+  {static} + TRIG_NAME = "sin"
+  + SineFunction()
+}
+TrigFunction <|-- SineFunction
+
+' ========= PARAMETERS =========
+class RealParameter {
+  - name: str
+  - symbole: str
+  - description: str
+  - min_value: float
+  - max_value: float
+  - default_value: float
+  - value: float
+  --
+  + RealParameter(symbol: str, name: str, description: str,
+                  min_value: float, max_value: float, default_value: float)
+  + set_default_values(): void
+  + getters/setters
+}
+
+MathFunction *-right- "0..*" RealParameter : parameters
+
+' ========= NUMERICAL =========
+abstract class NumericalTechniques {
+}
+
+class IntegralNumerical {
+}
+NumericalTechniques <|-- IntegralNumerical
+
+class DerivativeNumerical {
+}
+NumericalTechniques <|-- DerivativeNumerical
+
+NumericalTechniques *-- RealParameter
+NumericalTechniques *-- IntParameters
+
+class IntParameters {
+}
+
+' ========= OTHER FAMILIES =========
 class ExpoFunction {
-
 }
 MathFunction <|-- ExpoFunction
 
-
 class "B^x" {
-
 }
 ExpoFunction <|-- "B^x"
 
-
 class PolyFunction {
-
 }
 MathFunction <|-- PolyFunction
 
-
 class "QuadFunction" {
-
 }
 PolyFunction <|-- "QuadFunction"
-
-
-
-
-
-
-class SineFunction {
-
-}
-TrigoFunction <|-- SineFunction
-
-class RealParameters {
- 
-}
-MathFunction *-right- RealParameters  
-
-
-class IntParameters {
-
-}
-NumericalTechniques *-left- RealParameters  
-NumericalTechniques*-right- IntParameters
-class IntegralNumerical {
-
-}
-NumericalTechniques <|-- IntegralNumerical
-class DerivativeNumerical {
-
-}
-NumericalTechniques <|-- DerivativeNumerical
 
 @enduml
