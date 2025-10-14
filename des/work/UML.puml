@@ -2,7 +2,6 @@
 
 skinparam class AttributeIconSize 0
 
-' ========= CORE =========
 abstract class MathFunction {
   - name: str
   - description: str
@@ -17,11 +16,12 @@ abstract class MathFunction {
   + {property} details: str {readOnly}
 }
 
-' ========= TRIG FAMILY =========
+
+
 abstract class TrigFunction {
-  {static} + TRIG_NAME: str
-  {static} + PARAM_SPECS: (symbol, name, desc, min, max, default)[]
-  {static} + PARAM_ORDER: str[]
+  {static} + trig_name: str
+  {static} + param_specs: (symbol, name, desc, min, max, default)[]
+  {static} + param_order: str[]
   --
   + TrigFunction(name: str, details: str, description: str)
   + get_param(param_symbol: str): RealParameter
@@ -33,16 +33,59 @@ abstract class TrigFunction {
 
 MathFunction <|-- TrigFunction
 
+
+
 class SineFunction {
-  {static} + TRIG_NAME = "sin"
+  {static} + trig_name = "sin"
   + SineFunction()
 }
 TrigFunction <|-- SineFunction
 
-' ========= PARAMETERS =========
+
+
+class BaseExpoFunction {
+  {static} + param_specs: (symbol, name, desc, min, max, default)[]
+  {static} + param_order: str[]
+  --
+  + ExpoFunction(name: str, details: str, description: str)
+  + get_param(param_symbol: str): RealParameter
+  {abstract} + process(x: number): number
+}
+MathFunction <|-- BaseExpoFunction
+
+
+
+class ExpoFunction {
+  + ExpoFunction()
+  + process(x: number): number
+}
+BaseExpoFunction <|-- ExpoFunction
+
+
+
+class PolyFunction {
+  - _n: IntParameter
+  - _a: List<RealParameter>
+  --
+  + PolyFunction(name: str, details: str, description: str)
+  + _update_coeffs(): void
+  + get_param(param_symbol: str): RealParameter | IntParameter
+  + process(x: number): number
+}
+MathFunction <|-- PolyFunction
+
+
+
+class QuadFunction {
+  + QuadFunction()
+}
+PolyFunction <|-- QuadFunction
+
+
+
 class RealParameter {
   - name: str
-  - symbole: str
+  - symbol: str
   - description: str
   - min_value: float
   - max_value: float
@@ -54,42 +97,56 @@ class RealParameter {
   + set_default_values(): void
   + getters/setters
 }
-
 MathFunction *-right- "0..*" RealParameter : parameters
 
-' ========= NUMERICAL =========
+
+
+class IntParameters {
+  - name: str
+  - symbol: str
+  - description: str
+  - min_value: int
+  - max_value: int
+  - default_value: int
+  - value: int
+  --
+  + IntParameter(symbol: str, name: str, description: str,
+                 min_value: int, max_value: int, default_value: int)
+  + set_default_values(): void
+  + getters/setters
+}
+
+
+
 abstract class NumericalTechniques {
 }
+
+
 
 class IntegralNumerical {
 }
 NumericalTechniques <|-- IntegralNumerical
 
+
+
 class DerivativeNumerical {
 }
 NumericalTechniques <|-- DerivativeNumerical
-
 NumericalTechniques *-left- RealParameter
-NumericalTechniques *-right- IntParameters
+MathFunction *-left- IntParameters
+NumericalTechniques *-- IntParameters
 
-class IntParameters {
-}
 
-' ========= OTHER FAMILIES =========
-class ExpoFunction {
-}
-MathFunction <|-- ExpoFunction
 
-class "B^x" {
-}
-ExpoFunction <|-- "B^x"
 
-class PolyFunction {
-}
-MathFunction <|-- PolyFunction
 
-class "QuadFunction" {
-}
-PolyFunction <|-- "QuadFunction"
+
+
+
+
+
+
+
+
 
 @enduml

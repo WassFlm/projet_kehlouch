@@ -1,0 +1,45 @@
+from typing import override, TypeAlias
+from AbstractClasses import TrigFunction, BaseExpoFunction, PolyFunction
+import numpy as np
+
+
+number: TypeAlias = float | int
+
+
+class SinFunction(TrigFunction):
+    trig_name = "sin"
+    def __init__(self):
+        super().__init__("Sine Function", "details", "the description of a sine function is ..")
+
+
+
+
+class ExpoFunction(BaseExpoFunction):
+    def __init__(self):
+        super().__init__("Exponential", "details", "description")
+
+    @override
+    def process(self, x: number) -> number:
+        a = self.get_param('a').value
+        b = self.get_param('b').value
+        c = self.get_param('c').value
+        return a * b**x + c
+    
+
+
+class QuadFunction(PolyFunction):
+    def __init__(self):
+        super().__init__("Quadratic Funtion", "details", "the description of a quad function is ..")
+
+
+
+# Exemples d'usages
+
+s = SinFunction()
+print(s.process(np.pi/2))
+
+e = ExpoFunction()
+print(e.process(2))
+
+q = QuadFunction()
+print(q.process(10))

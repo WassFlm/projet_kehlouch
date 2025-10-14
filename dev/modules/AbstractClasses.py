@@ -1,4 +1,3 @@
-# imports
 from abc import ABC,abstractmethod
 from typing import override, TypeAlias, List
 from real_parameters import RealParameter, IntParameter
@@ -7,6 +6,7 @@ import numpy as np
 
 number: TypeAlias = float | int
 
+
 class MathFunction(ABC):
     def __init__(self,name: str,details: str,description: str):
         self.__name = name
@@ -14,14 +14,14 @@ class MathFunction(ABC):
         self.__details = details
         self._parameters: List[RealParameter]
 
-    @abstractmethod # will be overriden by sub-classes
+    @abstractmethod
     def process(self,x: number) -> number:
         pass
+
     @abstractmethod
     def get_param(self,param_symbol: str)-> RealParameter:
         pass
-    # getters setters
-    # (read-only)
+
     @property
     def name(self):
         return self.__name
@@ -33,29 +33,29 @@ class MathFunction(ABC):
         return self.__details
 
 
+
+
 class TrigFunction(MathFunction,ABC):
-    TRIG_NAME: str =  "" # overriden by sub-classes
-    PARAM_SPECS = [ 
-        # static data, should be on a different file for organization purposes
+    trig_name: str =  ""
+    param_specs = [ 
         ("a","Amplitude","Facteur d'échelle vertical",-5.0,5.0,1.0),
         ("f","Fréquence","Facteur d'échelle horizontal",-5.0,5.0,1.0),
         ("p","Phase","Décalage horizontal",-2*np.pi,2*np.pi,0.0),
         ("o","Décalage vertical","Décalage vertical",-5.0,5.0,0.0)
     ]
-    PARAM_ORDER = ['a','f','p','o'] # defines order of the parameters (a is first, f second..)
-    # form : f(x) = a * trg(fx + p) + o | trg is a trigonometric function 
+    param_order = ['a','f','p','o']
+    # form : f(x) = a * trg(fx + p) + o | trg -> fonction trigo
     def __init__(self, name, details, description):
         super().__init__(name, details, description)
-        
-        # create the parameters according to PARAM_SPECS
-        self._parameters = [RealParameter(*x) for x in self.PARAM_SPECS]
+        self._parameters = [RealParameter(*x) for x in self.param_specs]
+
     @override
     def get_param(self,param_symbol)-> RealParameter:
-        return self._parameters[self.PARAM_ORDER.index(param_symbol)]
+        return self._parameters[self.param_order.index(param_symbol)]
     
     @override
     def process(self,x: number) -> number:
-        trg = getattr(np,self.TRIG_NAME)
+        trg = getattr(np,self.trig_name)
         # equivalant to:
         # np[self.TRIG_NAME](x) where TRIG_NAME is any trigonometric function from derived class
         a = self.get_param('a').value
@@ -64,17 +64,7 @@ class TrigFunction(MathFunction,ABC):
         o = self.get_param('o').value
         return a * trg(f*x + p) + o
 
-# Trig function definitions
-class SinFunction(TrigFunction):
-    TRIG_NAME = "sin" # so that parent classes will know which function to use
-    def __init__(self):
-        super().__init__("Sine Function", "details", "the description of a sine function is ..")
 
-# it is that easy to create a new function
-#class CosFunction(TrigFunction):
-#    TRIG_NAME = "cos"
-#    def __init__(self):
-#        super.__init__("Cos function","my details","a description of cos function")
 
 
 
@@ -103,16 +93,7 @@ class BaseExpoFunction(MathFunction, ABC):
         return
     
 
-class ExpoFunction(BaseExpoFunction):
-    def __init__(self):
-        super().__init__("Exponential", "details", "description")
 
-    @override
-    def process(self, x: number) -> number:
-        a = self.get_param('a').value
-        b = self.get_param('b').value
-        c = self.get_param('c').value
-        return a * b**x + c
 
 
 class PolyFunction(MathFunction, ABC):
@@ -153,25 +134,3 @@ class PolyFunction(MathFunction, ABC):
         coeffs = [param.value for param in self._a]
         poly = np.poly1d(coeffs)
         return poly(x)
-    
-
-class QuadFunction(PolyFunction):
-    def __init__(self):
-        super().__init__("Quadratic Funtion", "details", "the description of a quad function is ..")
-
-# usage exemple
-f = SinFunction()
-
-
-print(f.description) # get a description of a function (sin)
-
-print(f.get_param('a').description) # get a description of a specified parameter
-
-print(f.process(np.pi/2)) # process a value
-
-
-e = ExpoFunction()
-print(e.process(2))
-
-quad = QuadFunction()
-print(quad.process(10))
