@@ -65,7 +65,7 @@ BaseExpoFunction <|-- ExpoFunction
 
 class PolyFunction {
   - _n: IntParameter
-  - _a: List<RealParameter>
+  - _coeffs_list: List<RealParameter>
   --
   + PolyFunction(name: str, details: str, description: str)
   + _update_coeffs(): void

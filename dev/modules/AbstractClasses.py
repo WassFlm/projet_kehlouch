@@ -100,35 +100,35 @@ class PolyFunction(MathFunction, ABC):
     ]
     
     # form : f(x) = a*x**n + b*x**n-1 + ... + z*x**0
-    
+
     def __init__(self, name, details, description):
         super().__init__(name, details, description)
 
         self._n = IntParameter(*self.param_specs[0]) 
 
-        self._a: list[RealParameter] = []
+        self._coeffs_list: list[RealParameter] = []
         self._update_coeffs()
 
     def _update_coeffs(self):
         degree = self._n.value
 
-        self._a = []
+        self._coeffs_list = []
         for i in range(degree, -1, -1):
             coeff_specs = (f"a{i}", f"Coefficient a{i}", f"Coefficient de x^{i}", -5.0, 5.0, 1.0)
             param = RealParameter(*coeff_specs)
-            self._a.append(param)
+            self._coeffs_list.append(param)
 
     @override
     def get_param(self, param_symbol: str) -> RealParameter:
         if param_symbol == "n":
             return self._n
         else:
-            for param in self._a:
+            for param in self._coeffs_list:
                 if param.symbol == param_symbol:
                     return param
         
     @override
     def process(self, x: number) -> number:
-        coeffs = [param.value for param in self._a]
+        coeffs = [param.value for param in self._coeffs_list]
         poly = np.poly1d(coeffs)
         return poly(x)
