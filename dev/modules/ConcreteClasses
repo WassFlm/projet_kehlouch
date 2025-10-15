@@ -30,16 +30,3 @@ class ExpoFunction(BaseExpoFunction):
 class QuadFunction(PolyFunction):
     def __init__(self):
         super().__init__("Quadratic Funtion", "details", "the description of a quad function is ..")
-
-
-
-# Exemples d'usages
-
-s = SinFunction()
-print(s.process(np.pi/2))
-
-e = ExpoFunction()
-print(e.process(2))
-
-q = QuadFunction()
-print(q.process(10))

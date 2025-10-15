@@ -56,8 +56,6 @@ class TrigFunction(MathFunction,ABC):
     @override
     def process(self,x: number) -> number:
         trg = getattr(np,self.trig_name)
-        # equivalant to:
-        # np[self.TRIG_NAME](x) where TRIG_NAME is any trigonometric function from derived class
         a = self.get_param('a').value
         f = self.get_param('f').value
         p = self.get_param('p').value
@@ -70,13 +68,12 @@ class TrigFunction(MathFunction,ABC):
 
 class BaseExpoFunction(MathFunction, ABC):
     param_specs = [ 
-        # static data, should be on a different file for organization purposes
         ("a","Coefficient","Facteur d'échelle vertical", -5.0, 5.0, 1.0),
         ("b","Base","Base de l'exposant", -5.0, 5.0, 1.0),
         ("c","c","Décalage vertical",-5.0, 5.0, 1.0),
     ]
 
-    param_order = ['a','b','c'] # defines order of the parameters (a is first, f second..)
+    param_order = ['a','b','c']
     # form : f(x) = a * b**x + c
 
     def __init__(self, name, details, description):
@@ -98,10 +95,11 @@ class BaseExpoFunction(MathFunction, ABC):
 
 class PolyFunction(MathFunction, ABC):
     param_specs = [ 
-        # static data, should be on a different file for organization purposes
         ("n","Degré","Degré de la fonction", 0, 5, 2),
         ("a","Coefficients","Coefficient des variables", -5.0, 5.0, 1.0)
     ]
+    
+    # form : f(x) = a*x**n + b*x**n-1 + ... + z*x**0
     
     def __init__(self, name, details, description):
         super().__init__(name, details, description)
