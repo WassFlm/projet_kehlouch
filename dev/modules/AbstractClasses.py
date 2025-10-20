@@ -6,6 +6,7 @@ import numpy as np
 
 number: TypeAlias = float | int
 
+# TODO : Mettre tout en forme canonique qui utilisent juste a, b, h, k
 
 class MathFunction(ABC):
     def __init__(self,name: str,details: str,description: str):
