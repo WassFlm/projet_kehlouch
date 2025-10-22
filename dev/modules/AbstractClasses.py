@@ -1,93 +1,72 @@
 from abc import ABC,abstractmethod
 from typing import override, TypeAlias, List
-from real_parameters import RealParameter, IntParameter
+from Parameters import RealParameter, IntParameter
 import numpy as np
 
 
 number: TypeAlias = float | int
 
-# TODO : Mettre tout en forme canonique qui utilisent juste a, b, h, k
 
 class MathFunction(ABC):
-    def __init__(self,name: str,details: str,description: str):
+    def __init__(self,name:str, details:str, description:str):
         self.__name = name
         self.__description = description
         self.__details = details
-        self._parameters: List[RealParameter]
+        self.a = RealParameter(*RealParameter.params_specs["canonical"]["a"])
+        self.b = RealParameter(*RealParameter.params_specs["canonical"]["b"])
+        self.h = RealParameter(*RealParameter.params_specs["canonical"]["h"])
+        self.k = RealParameter(*RealParameter.params_specs["canonical"]["k"])
+        self._parameters: List[RealParameter] = [self.a, self.b, self.c, self.d]
+
 
     @abstractmethod
     def process(self,x: number) -> number:
-        pass
-
-    @abstractmethod
-    def get_param(self,param_symbol: str)-> RealParameter:
         pass
 
     @property
     def name(self):
         return self.__name
+    
     @property
     def description(self):
         return self.__description
+    
     @property
     def details(self):
         return self.__details
 
+    @property
+    def parameters(self):
+        return self._parameters
 
 
 
 class TrigFunction(MathFunction,ABC):
-    trig_name: str =  ""
-    param_specs = [ 
-        ("a","Amplitude","Facteur d'échelle vertical",-5.0,5.0,1.0),
-        ("f","Fréquence","Facteur d'échelle horizontal",-5.0,5.0,1.0),
-        ("p","Phase","Décalage horizontal",-2*np.pi,2*np.pi,0.0),
-        ("o","Décalage vertical","Décalage vertical",-5.0,5.0,0.0)
-    ]
-    param_order = ['a','f','p','o']
-    # form : f(x) = a * trg(fx + p) + o | trg -> fonction trigo
-    def __init__(self, name, details, description):
-        super().__init__(name, details, description)
-        self._parameters = [RealParameter(*x) for x in self.param_specs]
+
+    __trig_name: str =  ""
+
+    # forme : f(x) = a * trg*(b*(x - h)) + k | trg -> fonction trigo
+
+    def __init__(self):
+        super().__init__()
 
     @override
-    def get_param(self,param_symbol)-> RealParameter:
-        return self._parameters[self.param_order.index(param_symbol)]
-    
-    @override
-    def process(self,x: number) -> number:
-        trg = getattr(np,self.trig_name)
-        a = self.get_param('a').value
-        f = self.get_param('f').value
-        p = self.get_param('p').value
-        o = self.get_param('o').value
-        return a * trg(f*x + p) + o
+    def process(self, x: number) -> number:
+        trg = self.__trig_name
+        a, b, h, k = [i for i in self._parameters]
+        return a * trg*(b*(x - h)) + k
 
 
 
 
 
 class BaseExpoFunction(MathFunction, ABC):
-    param_specs = [ 
-        ("a","Coefficient","Facteur d'échelle vertical", -5.0, 5.0, 1.0),
-        ("b","Base","Base de l'exposant", -5.0, 5.0, 1.0),
-        ("c","c","Décalage vertical",-5.0, 5.0, 1.0),
-    ]
 
-    param_order = ['a','b','c']
-    # form : f(x) = a * b**x + c
-
-    def __init__(self, name, details, description):
-        super().__init__(name, details, description)
-
-        self._parameters = [RealParameter(*x) for x in self.param_specs]
-
-    @override
-    def get_param(self,param_symbol)-> RealParameter:
-        return self._parameters[self.param_order.index(param_symbol)]
+    def __init__(self):
+        super().__init__()
     
     @abstractmethod
-    def process(self,x: number) -> number:
+    def process(self, x: number) -> number:
         return
     
 
@@ -97,39 +76,36 @@ class BaseExpoFunction(MathFunction, ABC):
 class PolyFunction(MathFunction, ABC):
     param_specs = [ 
         ("n","Degré","Degré de la fonction", 0, 5, 2),
-        ("a","Coefficients","Coefficient des variables", -5.0, 5.0, 1.0)
+        ("ai","Coefficients","Coefficient des variables", -5.0, 5.0, 1.0)
     ]
     
     # form : f(x) = a*x**n + b*x**n-1 + ... + z*x**0
 
-    def __init__(self, name, details, description):
-        super().__init__(name, details, description)
+    def __init__(self):
+        super().__init__()
 
-        self._n = IntParameter(*self.param_specs[0]) 
-
-        self._coeffs_list: list[RealParameter] = []
+        self.n = IntParameter(*self.param_specs[0]) 
+        self.coeffs_list: list[RealParameter] = []
         self._update_coeffs()
 
     def _update_coeffs(self):
-        degree = self._n.value
+        degree = self.n.value
 
-        self._coeffs_list = []
+        self.coeffs_list = [] #reset la liste pour pas que ca s'ajoute par dessus les autres
         for i in range(degree, -1, -1):
             coeff_specs = (f"a{i}", f"Coefficient a{i}", f"Coefficient de x^{i}", -5.0, 5.0, 1.0)
             param = RealParameter(*coeff_specs)
-            self._coeffs_list.append(param)
-
-    @override
-    def get_param(self, param_symbol: str) -> RealParameter:
-        if param_symbol == "n":
-            return self._n
-        else:
-            for param in self._coeffs_list:
-                if param.symbol == param_symbol:
-                    return param
+            self.coeffs_list.append(param)
         
     @override
     def process(self, x: number) -> number:
-        coeffs = [param.value for param in self._coeffs_list]
-        poly = np.poly1d(coeffs)
+        values = [param.value for param in self._coeffs_list]
+        poly = np.poly1d(values)
         return poly(x)
+
+
+# def RationalFunction(MathFunction)
+
+# def AbsoluteValueFunction(MathFuntion)
+
+# def etc...

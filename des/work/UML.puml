@@ -26,9 +26,7 @@ abstract class TrigFunction {
   + TrigFunction(name: str, details: str, description: str)
   + get_param(param_symbol: str): RealParameter
   + process(x: number): number
-  --
-  .. Formula ..
-  f(x) = a * trg(f * x + p) + o
+  
 }
 
 MathFunction <|-- TrigFunction
@@ -132,9 +130,9 @@ NumericalTechniques <|-- IntegralNumerical
 class DerivativeNumerical {
 }
 NumericalTechniques <|-- DerivativeNumerical
+MathFunction *-- IntParameters
 NumericalTechniques *-left- RealParameter
-MathFunction *-left- IntParameters
-NumericalTechniques *-- IntParameters
+NumericalTechniques *-right- IntParameters
 
 
 

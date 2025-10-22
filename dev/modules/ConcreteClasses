@@ -27,6 +27,6 @@ class ExpoFunction(BaseExpoFunction):
     
 
 
-class QuadFunction(PolyFunction):
-    def __init__(self):
-        super().__init__("Quadratic Funtion", "details", "the description of a quad function is ..")
+# class QuadFunction(PolyFunction):
+#     def __init__(self):
+#         super().__init__("Quadratic Funtion", "details", "the description of a quad function is ..")
