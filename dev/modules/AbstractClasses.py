@@ -41,7 +41,7 @@ class MathFunction(ABC):
 
 
 
-class TrigFunction(MathFunction,ABC):
+class TrigFunction(MathFunction, ABC):
 
     __trig_name: str =  ""
 
