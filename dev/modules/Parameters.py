@@ -6,7 +6,8 @@ class RealParameter():
             "a" : ("a", "Coefficient a", "Facteur d'échelle vertical", -5.0, 5.0, 1.0),
             "b" : ("b", "Coefficient b", "Facteur d'échelle horizontal", -5.0, 5.0, 1.0),
             "h" : ("h", "Coefficient h", "Facteur de translation horizontale", -5.0, 5.0, 1.0),
-            "k" : ("k", "Coefficient k", "Facteur de translation verticale", -5.0, 5.0, 1.0)
+            "k" : ("k", "Coefficient k", "Facteur de translation verticale", -5.0, 5.0, 1.0),
+            "c" : ("c", "Base", "Base de l'exposant ou du logarithme", 0, 15.0, 10.0)
         },
 
         "other(math, etc... (plus tard))" : {
@@ -21,6 +22,7 @@ class RealParameter():
         self.__min_value = min_value
         self.__max_value = max_value
         self.__default_value = default_value
+        self.__value = default_value
         pass
 
     def set_default_values(self): #utile pour reset les valeurs plus tard ?

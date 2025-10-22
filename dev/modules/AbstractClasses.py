@@ -16,12 +16,16 @@ class MathFunction(ABC):
         self.b = RealParameter(*RealParameter.params_specs["canonical"]["b"])
         self.h = RealParameter(*RealParameter.params_specs["canonical"]["h"])
         self.k = RealParameter(*RealParameter.params_specs["canonical"]["k"])
-        self._parameters: List[RealParameter] = [self.a, self.b, self.c, self.d]
-
+        self.c = RealParameter(*RealParameter.params_specs["canonical"]["c"])
+        self._parameters: List[RealParameter] = [self.a, self.b, self.h, self.k,self.c]
 
     @abstractmethod
-    def process(self,x: number) -> number:
+    def _process_func(self,x):
         pass
+
+    def process(self,x: number) -> number:
+        a, b, h, k,c = [i.value for i in self._parameters]
+        return a * self._process_func(b*(x-h)) + k
 
     @property
     def name(self):
@@ -43,32 +47,19 @@ class MathFunction(ABC):
 
 class TrigFunction(MathFunction, ABC):
 
-    __trig_name: str =  ""
+    _trig_name: str =  ""
 
     # forme : f(x) = a * trg*(b*(x - h)) + k | trg -> fonction trigo
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name, details, description):
+        self._process_func = getattr(np, self._trig_name)
+        super().__init__(name, details, description)
 
-    @override
-    def process(self, x: number) -> number:
-        trg = self.__trig_name
-        a, b, h, k = [i for i in self._parameters]
-        return a * trg*(b*(x - h)) + k
-
-
-
-
-
-class BaseExpoFunction(MathFunction, ABC):
-
-    def __init__(self):
-        super().__init__()
-    
-    @abstractmethod
-    def process(self, x: number) -> number:
-        return
-    
+    # @override
+    # def process(self, x: number) -> number:
+    #     trg_func = getattr(np, self._trig_name)
+    #     a, b, h, k = [i.value for i in self._parameters]
+    #     return a * trg_func((b*(x - h))) + k
 
 
 
@@ -81,8 +72,8 @@ class PolyFunction(MathFunction, ABC):
     
     # form : f(x) = a*x**n + b*x**n-1 + ... + z*x**0
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name, details, description):
+        super().__init__(name, details, description)
 
         self.n = IntParameter(*self.param_specs[0]) 
         self.coeffs_list: list[RealParameter] = []

@@ -7,7 +7,7 @@ number: TypeAlias = float | int
 
 
 class SinFunction(TrigFunction):
-    trig_name = "sin"
+    _trig_name = "sin"
     def __init__(self):
         super().__init__("Sine Function", "details", "the description of a sine function is ..")
 
@@ -20,13 +20,21 @@ class ExpoFunction(BaseExpoFunction):
 
     @override
     def process(self, x: number) -> number:
-        a = self.get_param('a').value
-        b = self.get_param('b').value
-        c = self.get_param('c').value
-        return a * b**x + c
-    
 
+        return 
+    
+# class LogFunction(BaseExpoFunction):
+#     def __init__(self):
+#         super().__init__("Log", "details", "description")
+
+#     @override
+#     def _process_func(self,x):
+#         # calculer log selon x et la base
+#         base = self.c.value
+#         return np.log(x) / np.log(base)
 
 class QuadFunction(PolyFunction):
     def __init__(self):
         super().__init__("Quadratic Funtion", "details", "the description of a quad function is ..")
+
+
